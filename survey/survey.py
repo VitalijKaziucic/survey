@@ -6,6 +6,7 @@ import time
 class Survey:
     green = "green"
     red = "red"
+    # white = "white"
 
     def __init__(self, projects: list, participants: list):
         self.projects = projects
@@ -79,7 +80,9 @@ class Survey:
             elif total > 100:
                 color = self.red
 
-            total_string = f"""<p style="color:{color};font-size:30px">Total time: {total}%</p>"""
+            total_string = f'<p style="{f"color: %s;font-size:20px" % color if color else "font-size:20px"}">' \
+                           f'Total time: {total}%</p>'
+            print(total_string)
             st.subheader("Determine the percentage of time you spent working on the project per month")
             st.write(total_string, unsafe_allow_html=True)
 
