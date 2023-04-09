@@ -1,12 +1,15 @@
 import pandas as pd
 import streamlit as st
 import time
+import os
+
+
+class Colors:
+    green = "green"
+    red = "red"
 
 
 class Survey:
-    green = "green"
-    red = "red"
-    # white = "white"
 
     def __init__(self, projects: list, participants: list):
         self.projects = projects
@@ -18,8 +21,11 @@ class Survey:
         names = ["respondent"] + self.projects
         values = [st.session_state.get(key) for key in names]
         dataframe = pd.DataFrame.from_dict({"key": names, "values": values})
-        file_name = f"{time.strftime('%y-%m-%d %H:%M:%S')} {self.respondent}.csv"
-        dataframe.to_csv(file_name, index=False)
+        file_name = f"{time.strftime('%Y-%m-%d %H:%M:%S')} {self.respondent}.csv"
+        path_name = file_name[:7]
+        os.mkdir(path_name)
+        file_save = os.path.join(path_name, file_name)
+        dataframe.to_csv(file_save, index=False)
         for project in self.projects:
             st.session_state[project] = 0
         st.balloons()
@@ -45,7 +51,7 @@ class Survey:
             with columns.get(column):
                 for project in projects:
                     if project:
-                        st.slider(label=project,
+                        st.number_input(label=project,
                                   min_value=0,
                                   max_value=100,
                                   step=5, key=project)
@@ -76,13 +82,13 @@ class Survey:
             # set text color
             color = None
             if total == 100:
-                color = self.green
+                color = Colors.green
             elif total > 100:
-                color = self.red
+                color = Colors.red
 
             total_string = f'<p style="{f"color: %s;font-size:20px" % color if color else "font-size:20px"}">' \
                            f'Total time: {total}%</p>'
-            print(total_string)
+
             st.subheader("Determine the percentage of time you spent working on the project per month")
             st.write(total_string, unsafe_allow_html=True)
 
